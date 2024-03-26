@@ -1,0 +1,99 @@
+{% extends "quotes/base.html" %}
+
+{% block content %}
+<style>
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: transparent; 
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 18px;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+
+    button[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    .secondary {
+        background-color: #6c757d;
+        color: #fff;
+    }
+
+    .secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+
+<div>
+    <h2>Sign Up</h2>
+</div>
+
+<form method="post" action="{% url 'users:signup' %}">
+    {% csrf_token %}
+    <div>
+        <label for="id_username"> Username:</label>
+        {{ form.username }}
+        <span>{{ form.errors.username }}</span>
+    </div>
+    <br>
+    <div>
+        <label for="id_password1"> Password:</label>
+        {{ form.password1 }}
+        <span>{{ form.errors.password1 }}</span>
+    </div>
+    <div>
+        <label for="id_password2"> Password confirmation:</label>
+        {{ form.password2 }}
+        <span>{{ form.errors.password2 }}</span>
+    </div>
+    <div class="grid">
+        <button type="submit">Submit</button>
+        <button type="reset" class="secondary">Reset</button>
+    </div>
+</form>
+
+{% endblock %}
+
+

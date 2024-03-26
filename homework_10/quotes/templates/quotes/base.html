@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Note information</title>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css"/>
+</head>
+<style>
+    .back {
+        font-family: 'Comic Sans MS', cursive; 
+        color: #4e51e4;
+        margin-left: 10px; 
+        text-transform: uppercase; 
+        font-size: 34px; 
+    }
+    
+    .back:hover {
+        color: #00CED1; 
+        transform: rotate(5deg); 
+    }
+    
+    .auth-buttons {
+    text-align: right; 
+    margin-top: -95px; 
+    margin-right: 25px;
+    }
+
+    .auth-buttons a {
+        margin-left: 10px;
+        box-sizing: 10px;
+    }
+
+    .brand h1{
+        margin-left: 0px;
+        margin-top: 20px;
+    }
+
+    .create,
+    .input,
+    .profile,
+    .logout {
+        display: inline-block;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .create {
+        background-color: #1d7a39;
+        color: white;
+    }
+
+    .input {
+        background-color: #214d6b; 
+        color: white;
+    }
+
+    .profile {
+        background-color: #abad24;
+        color: white;
+    }
+
+    .logout {
+        background-color: #494948;
+    }
+
+    .create:hover,
+    .input:hover,
+    .profile:hover,
+    .logout:hover {
+        background-color: #0ba79f; 
+        color: white;
+    }
+</style>
+<body>
+    <main class="container">
+        <nav style="margin-bottom: 28px; padding-left: 30">
+            <ul>
+                <h3><a href="/" class="back"  style="text-decoration: none">Back</a></h3>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            {% if user.is_authenticated %}
+            <a href="{% url 'quotes:tag' %}" role="button" class="create">Add tag</a>
+            <a href="{% url 'quotes:quote' %}" role="button" class="create">Add quote</a>
+            <a href="{% url 'users:profile' %}" role="button" class="profile">Profile</a>
+            <a href="{% url 'users:logout' %}" role="button" class="logout">Logout</a>
+            {% else %}
+            <a href="{% url 'users:signup' %}" role="button" class="input">Sign up</a>
+            <a href="{% url 'users:login' %}" role="button" class="input">Sign in</a>
+            {% endif %}
+        </div>
+        {% block content %} {% endblock %}
+</main>
+</body>
+</html>

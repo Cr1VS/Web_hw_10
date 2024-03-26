@@ -1,0 +1,98 @@
+{% extends 'quotes/base.html' %}
+
+{% block content %}
+<style>
+    .quote {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        max-width: 900px; 
+        max-height: 400px; 
+    }
+
+    .quote .text {
+        font-size: 18px;
+        font-style: italic;
+        color: #ffffff;
+    }
+    
+    .by {
+        display: block;
+    }
+    .quote .author {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .tags {
+        margin-top: 10px;
+    }
+
+    .tags .tag {
+        display: inline-block;
+        margin-right: 5px;
+        padding: 3px 8px;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 3px;
+        text-decoration: none;
+    }
+
+    .tags .tag:hover {
+        background-color: #0056b3;
+    }
+ 
+    .col-md-8{
+        margin-top: 30px;
+    }
+</style>
+<body>
+    <header>
+        <div class="brand"> 
+            <h1><a href="/" style="text-decoration: none">Quotes to Scrape</a></h1>
+        </div>
+    </header>
+<main class="container">   
+    <div class="col-md-8">
+        {% for quote in quotes %}
+        <div class="quote" itemscope="" itemtype="http://schema.org/CreativeWork">
+            <span class="text" itemprop="text">{{ quote.name }}</span>
+            <span class="by"> by <small class="author" itemprop="author">{{ quote.author }}</small>
+            <a href="/author/{{ quote.author }}" style="text-decoration: none">(about)</a>
+            </span>
+            <div class="tags">
+                Tags:
+                <meta class="keywords" itemprop="keywords" content="{{ quote.tags }}"> 
+                {% for tag in quote.tags.all %}
+                <a class="tag" href="/tag/{{ tag }}/page/1/">{{ tag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>  
+    <div class="top-tags">
+        <h2>Top Ten Tags</h2>
+        <ul>
+            {% for tag in top_tags %}
+                <li>{{ tag.name }} - {{ tag.num_quotes }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <nav>
+        <ul class="pager">     
+            <li class="previous">
+                <a class="{% if not quotes.has_previous %} disabled {% endif %}"
+                href="{% if quotes.has_previous %} {% url 'quotes:root_paginate' quotes.previous_page_number %} {% else %} # {% endif %}">
+                    <span aria-hidden="true">←</span> Previous
+                </a>
+            </li>     
+            <li class="next">
+                <a class="{% if not quotes.has_next %} disabled {% endif %}"
+                href="{% if quotes.has_next %} {% url 'quotes:root_paginate' quotes.next_page_number %} {% else %} # {% endif %}">
+                Next <span aria-hidden="true">→</span>
+                </a>
+            </li>          
+        </ul>
+    </nav>  
+    {% endblock %}

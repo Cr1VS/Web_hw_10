@@ -1,0 +1,56 @@
+{% extends "quotes/base.html" %}
+
+{% block content %}
+
+<div>
+    <h1>Profile: {{user.username}}</h1>
+    <img src="{{ user.profile.avatar.url }}" alt="avatar of user"/>
+</div>
+
+{% if messages %}
+<div>
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert-{{ message.tags }}" {% endif %}>{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="small mb-1">Change Avatar:</label>
+                {{ profile_form.avatar }}
+                <span>{{ profile_form.errors.avatar }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="grid">
+        <button type="submit">Save Changes</button>
+        <button type="reset" class="secondary">Reset</button>
+    </div>
+
+</form>
+
+{% endblock content %}
+
+<div class="quote" itemscope="" itemtype="http://schema.org/CreativeWork">
+    <span class="text" itemprop="text">“The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking.”</span>
+    <span>by <small class="author" itemprop="author">Albert Einstein</small>
+    <a href="/author/Albert-Einstein">(about)</a>
+    </span>
+    <div class="tags">
+        Tags:
+        <meta class="keywords" itemprop="keywords" content="change,deep-thoughts,thinking,world"> 
+        
+        <a class="tag" href="/tag/change/page/1/">change</a>
+        
+        <a class="tag" href="/tag/deep-thoughts/page/1/">deep-thoughts</a>
+        
+        <a class="tag" href="/tag/thinking/page/1/">thinking</a>
+        
+        <a class="tag" href="/tag/world/page/1/">world</a>
+        
+    </div>
+</div>
