@@ -1,16 +1,34 @@
-{% extends 'quotes/base.html' %}
+{% extends "quotes/base.html" %}
 
 {% block content %}
 <style>
-.quote {
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    max-width: 900px; 
-    max-height: 700px;
-    word-wrap: break-word;
-}
+    .quote {
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .pagination {
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        margin-right: 5px;
+    }
+
+    .header {
+        margin-top: 60px;
+    }
+
+    .quote {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        max-width: 900px; 
+        max-height: 700px; 
+    }
 
     .quote .text {
         font-size: 18px;
@@ -29,11 +47,12 @@
 
     .tags {
         margin-top: 10px;
+        
     }
 
     .tags .tag {
-        margin-bottom: 5px;
         display: inline-block;
+        margin-bottom: 5px;
         margin-right: 5px;
         padding: 6px 10px;
         background-color: #007bff;
@@ -88,6 +107,7 @@
         border-radius: 20px;
         text-decoration: none;
         transition: all 0.3s ease;
+        
     }
 
     .tag-name:hover {
@@ -99,44 +119,17 @@
     .list-top-tegs {
         margin-bottom: 10px; 
     }
-    .container main {
-        margin-top: 72px;
-    }
-
-    .brand {
-        margin-top: -100px;
-    }
-    .search-form {
-        display: inline-block;
-        margin-right: 10px;
-        border-radius: 5px;
-        height: 47px;
-        position: relative;
-        top: 4px;
-        transition: box-shadow 0.3s, border-radius 0.3s; 
-    }
-
-    .search-form input[type="text"] {
-        width: 270px;
-        padding: 12px 24px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        height: 100%; 
-    }
-
-    .search-form:hover input[type="text"] {
-        border-color: #007bff;
-    }
 </style>
 <body>
-    <div class="brand"> 
-        <h1><a href="/" style="text-decoration: none">Quotes to Scrape</a></h1>
-    </div>
+    <h1 class="header">
+        Viewing tag: 
+        <a href="/quotes_by_tag/{{ tag_name }}/page/1/" style="text-decoration: none">{{ tag_name }}</a>
+    </h1>
     <div class="top-tags">
         <h2>Top Ten Tags</h2>
         <div class="top-ten-tags"> 
             <ul class="tag-list">
-                {% for tag in top_tags %}
+                {% for tag in top_ten_tags %}
                 <div class="list-top-tegs">
                     <span class="tag-number">{{ forloop.counter }}. </span>
                     <a class="tag-name" href="/quotes_by_tag/{{ tag }}/page/1">{{ tag.name }}</a>
@@ -147,7 +140,6 @@
             </ul>
         </div>
     </div>  
-<main class="container">   
     <div class="col-md-8">
         {% for quote in quotes %}
         <div class="quote" itemscope="" itemtype="http://schema.org/CreativeWork">
@@ -159,30 +151,30 @@
                 Tags:
                 <meta class="keywords" itemprop="keywords" content="{{ quote.tags }}"> 
                 {% for tag in quote.tags.all %}
-                <a class="tag" href="/quotes_by_tag/{{ tag }}/page/1">{{ tag }}</a>
+                <a class="tag" href="{% url 'quotes:quotes_by_tag_paginated' tag.name 1 %}">{{ tag.name }}</a>
                 {% endfor %}
             </div>
         </div>
         {% endfor %}
     </div>  
-<!-- Кнопки для навигации по страницам -->
-<div class="pagination">
-    <span class="step-links">
-        {% if quotes.has_previous %}
-            <a href="/page/1">&laquo; First</a>
-            <a href="/page/{{ quotes.previous_page_number }}">&#10094; Previous</a>
-        {% endif %}
-        
-        <span class="current">
-            <span style="text-align: center;">Page {{ quotes.number }} of {{ quotes.paginator.num_pages }}.</span>
+    <!-- Кнопки для навигации по страницам -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if quotes.has_previous %}
+                <a href="page/1">&laquo; First</a>
+                <a href="page/{{ quotes.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ quotes.number }} з {{ quotes.paginator.num_pages }}.
+            </span>
+
+            {% if quotes.has_next %}
+                <a href="page/{{ quotes.next_page_number }}">next</a>
+                <a href="page/{{ quotes.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
         </span>
-        
-        {% if quotes.has_next %}
-            <a href="/page/{{ quotes.next_page_number }}">Next &#10095;</a>
-            <a href="/page/{{ quotes.paginator.num_pages }}">Last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
-
-
-    {% endblock %}
+    </div>
+</body>
+</html>
+{% endblock %}

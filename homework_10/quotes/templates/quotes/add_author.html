@@ -2,28 +2,8 @@
 
 {% block content %}
 <style>
-    .alert {
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 4px;
-        font-size: 16px;
-    }
-
-    .alert-info {
-        background-color: #d1ecf1;
-        border: 1px solid #bee5eb;
-        color: #0c5460;
-    }
-
-    .alert-warning {
-        background-color: #fff3cd;
-        border: 1px solid #ffeeba;
-        color: #856404;
-    }
-
-
     form {
-        max-width: 500px;
+        max-width: 700px; 
         margin: 0 auto;
         padding: 20px;
         border-radius: 8px;
@@ -37,7 +17,7 @@
     }
 
     input[type="text"],
-    input[type="password"] {
+    select {
         width: 100%;
         padding: 10px;
         border-radius: 4px;
@@ -80,26 +60,27 @@
     }
 </style>
 
-{% if messages %}
-<div>
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-<form action="{% url 'users:login' %}" method="post">
+<form method="POST" action="{% url 'quotes:add_author' %}">
     {% csrf_token %}
-    <div>
-        <label for="id_username"> Username:</label>
-        {{ form.username }}
+    <div style="padding: 10px">
+        <label for="id_name">Author name:</label>
+        {{ form.fullname }}
+        <span>{{ form.errors.fullname }}</span>
     </div>
-
-    <div>
-        <label for="id_password">Password:</label>
-        {{ form.password }}
+    <div style="padding: 10px">
+        <label for="id_description">Born date:</label>
+        {{ form.born_date }}
+        <span>{{ form.errors.born_date }}</span>
+    </div>
+    <div style="padding: 10px">
+        <label for="id_description">Born location:</label>
+        {{ form.born_location }}
+        <span>{{ form.errors.born_location }}</span>
+    </div>
+    <div style="padding: 10px">
+        <label for="id_description">Description:</label>
+        {{ form.description }}
+        <span>{{ form.errors.description }}</span>
     </div>
 
     <div class="grid">
@@ -107,5 +88,4 @@
         <button type="reset" class="secondary">Reset</button>
     </div>
 </form>
-
 {% endblock %}

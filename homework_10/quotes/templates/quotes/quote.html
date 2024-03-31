@@ -58,31 +58,173 @@
     .secondary:hover {
         background-color: #5a6268;
     }
+
+    .tag-list {
+        display: none;
+        position: absolute;
+        background-color: #11154d;
+        border: 1px solid #cccccc;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .tag-list label {
+        display: block;
+        cursor: pointer;
+    }
+
+    .tag-list label:hover {
+        background-color: #0c4d14;
+        border-radius: 10px;
+    }
+
+    #selected-tags {
+        margin-top: 10px;
+    }
+
+    .selected-tag {
+        display: inline-block;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        background-color: #417c3b;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .selected-tag:hover {
+        background-color: #0056b3;
+    }
+
+    #more-tags {
+        display: block;
+        margin-top: 5px; 
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #795988;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s; 
+    }
+
+    #more-tags:hover {
+        background-color: #332379;
+        transform: translateY(-2px); 
+    }
 </style>
 
 <form method="POST" action="{% url 'quotes:quote' %}">
     {% csrf_token %}
     <div style="padding: 10px">
-        <label for="id_name">Quote name:</label>
+        <label for="id_name">Quote:</label>
         {{ form.name }}
         <span>{{ form.errors.name }}</span>
     </div>
     <div style="padding: 10px">
-        <label for="id_description">Quote description:</label>
-        {{ form.description }}
-        <span>{{ form.errors.description }}</span>
+        <label for="id_description">Author:</label>
+        {{ form.author }}
+        <span>{{ form.errors.author }}</span>
     </div>
     <div style="padding: 10px">
-        <label for="id_tags">Select tags:</label>
-        <select name="tags" multiple="multiple" required>
+        <label>Select tags:</label>
+        <div id="selected-tags">
+            <!-- Здесь будут отображаться выбранные теги -->
+        </div>
+        <button type="button" id="more-tags">More Tags</button>
+        <div id="tag-list" class="tag-list">
             {% for tag in tags %}
-            <option value="{{tag.name}}">{{tag.name}}</option>
+                <label>
+                    <input type="checkbox" class="tag-checkbox" name="tags" value="{{ tag.name }}">
+                    {{ tag.name }}
+                </label>
             {% endfor %}
-        </select>
+        </div>
     </div>
     <div class="grid">
         <button type="submit">Submit</button>
         <button type="reset" class="secondary">Reset</button>
     </div>
 </form>
+
+<script>
+    // Показать все теги при нажатии на кнопку "More Tags"
+    document.getElementById('more-tags').addEventListener('click', function() {
+        var tagList = document.getElementById('tag-list');
+        if (tagList.style.display === 'none') {
+            tagList.style.display = 'block';
+        } else {
+            tagList.style.display = 'none';
+        }
+    });
+    // Обработка кликов по тегам
+    var tagCheckboxes = document.querySelectorAll('.tag-checkbox');
+    tagCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var selectedTagsContainer = document.getElementById('selected-tags');
+            var selectedTag = selectedTagsContainer.querySelector('.selected-tag[data-value="' + this.value + '"]');
+
+            if (this.checked && !selectedTag) {
+                // Добавить выбранный тег в контейнер
+                var selectedTagElement = document.createElement('div');
+                selectedTagElement.classList.add('selected-tag');
+                selectedTagElement.textContent = this.value;
+                selectedTagElement.setAttribute('data-value', this.value);
+                selectedTagsContainer.appendChild(selectedTagElement);
+            } else if (!this.checked && selectedTag) {
+                // Удалить выбранный тег из контейнера
+                selectedTag.parentNode.removeChild(selectedTag);
+            }
+        });
+    });
+
+
+
+    // Обработка кликов по выбранным тегам
+    var selectedTagsContainer = document.getElementById('selected-tags');
+    selectedTagsContainer.addEventListener('click', function(event) {
+        if (event.target.classList.contains('selected-tag')) {
+            // Удаление выбранного тега из контейнера
+            event.target.parentNode.removeChild(event.target);
+
+            // Снятие соответствующего чекбокса
+            var checkbox = document.querySelector('.tag-checkbox[value="' + event.target.textContent + '"]');
+            if (checkbox) {
+                checkbox.checked = false;
+            }
+        }
+    });
+
+    // Обработка нажатия кнопки Reset
+    document.querySelector('button[type="reset"]').addEventListener('click', function() {
+        // Удалить все выбранные теги и снять галочки с чекбоксов
+        var selectedTags = document.querySelectorAll('.selected-tag');
+        selectedTags.forEach(function(tag) {
+            tag.parentNode.removeChild(tag);
+        });
+        var checkboxes = document.querySelectorAll('.tag-checkbox');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+    });
+    
+    // Скрыть список тегов при клике на любое место страницы, кроме списка тегов и кнопки "More Tags"
+    document.addEventListener('click', function(event) {
+        var tagList = document.getElementById('tag-list');
+        var moreTagsButton = document.getElementById('more-tags');
+        if (!tagList.contains(event.target) && event.target !== moreTagsButton) {
+            tagList.style.display = 'none';
+        }
+    });
+</script>
+
+
+
+
+
+
+
 {% endblock %}

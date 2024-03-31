@@ -1,33 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <title>Note information</title>
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css"/>
-</head>
+<meta charset="UTF-8"/>
+<title>Note information</title>
+<link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css"/>
 <style>
     .back {
         font-family: 'Comic Sans MS', cursive; 
         color: #4e51e4;
         margin-left: 10px; 
         text-transform: uppercase; 
-        font-size: 34px; 
+        font-size: 44px;
+        transition: transform 0.3s ease;
+        display: inline-block;
+        vertical-align: middle; 
+        margin: 0; 
+        padding: 0;
+        margin-top: -140px;
+        margin-left: 10px;
     }
+
     
     .back:hover {
         color: #00CED1; 
-        transform: rotate(5deg); 
+        transform: rotate(5deg) translateX(5px);
     }
     
     .auth-buttons {
-    text-align: right; 
-    margin-top: -95px; 
-    margin-right: 25px;
+        text-align: right; 
+        margin-top: 10px; 
+        margin-right: 25px;
+        align-items: center;
+        vertical-align: middle;
     }
+    
 
     .auth-buttons a {
+        display: inline-block;
         margin-left: 10px;
         box-sizing: 10px;
+        vertical-align: middle;
     }
 
     .brand h1{
@@ -77,26 +89,59 @@
         background-color: #0ba79f; 
         color: white;
     }
+
+    .search-form {
+        display: inline-block;
+        margin-right: 10px;
+        border-radius: 5px;
+        height: 47px;
+        position: relative;
+        top: 4px;
+        transition: box-shadow 0.3s, border-radius 0.3s; 
+    }
+
+    .search-form input[type="text"] {
+        width: 270px;
+        padding: 12px 24px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        height: 100%; 
+    }
+
+    .search-form:hover input[type="text"] {
+        border-color: #007bff;
+    }
 </style>
+</head>
 <body>
+    
+    <div class="auth-buttons">
+        <form method="GET" class="search-form" action="{% url 'quotes:main' %}">
+            <input type="text" name="query" placeholder="Search by tag or author">
+            <!-- <button type="submit">Search</button> -->
+        </form>
+        {% if user.is_authenticated %}
+        <a href="{% url 'quotes:tag_add' %}" role="button" class="create">Add tag</a>
+        <a href="{% url 'quotes:quote' %}" role="button" class="create">Add quote</a>
+        <a href="{% url 'quotes:add_author' %}" role="button" class="create">Add author</a>
+        <a href="{% url 'users:profile' %}" role="button" class="profile">Profile</a>
+        <a href="{% url 'users:logout' %}" role="button" class="logout">Logout</a>
+        {% else %}
+        <a href="{% url 'users:signup' %}" role="button" class="input">Sign up</a>
+        <a href="{% url 'users:login' %}" role="button" class="input">Sign in</a>
+        {% endif %}
+    </div>
     <main class="container">
         <nav style="margin-bottom: 28px; padding-left: 30">
             <ul>
-                <h3><a href="/" class="back"  style="text-decoration: none">Back</a></h3>
+                {% if request.path != "/" %}
+                <div class="back-container">
+                    <h3><a href="/" class="back" style="text-decoration: none">Main page</a></h3>
+                </div>
+                {% endif %}
             </ul>
         </nav>
-        <div class="auth-buttons">
-            {% if user.is_authenticated %}
-            <a href="{% url 'quotes:tag' %}" role="button" class="create">Add tag</a>
-            <a href="{% url 'quotes:quote' %}" role="button" class="create">Add quote</a>
-            <a href="{% url 'users:profile' %}" role="button" class="profile">Profile</a>
-            <a href="{% url 'users:logout' %}" role="button" class="logout">Logout</a>
-            {% else %}
-            <a href="{% url 'users:signup' %}" role="button" class="input">Sign up</a>
-            <a href="{% url 'users:login' %}" role="button" class="input">Sign in</a>
-            {% endif %}
-        </div>
         {% block content %} {% endblock %}
-</main>
+    </main>
 </body>
 </html>

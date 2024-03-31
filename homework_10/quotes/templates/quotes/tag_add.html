@@ -58,8 +58,7 @@
         background-color: #5a6268;
     }
 </style>
-
-<form method="POST" action="{% url 'quotes:tag' %}">
+<form method="POST" action="{% url 'quotes:tag_add' %}">
     {% csrf_token %}
     <div style="padding: 10px">
         <label for="id_name">Enter the tag name:</label>
@@ -71,5 +70,4 @@
         <button type="reset" class="secondary">Reset</button>
     </div>
 </form>
-
 {% endblock %}
