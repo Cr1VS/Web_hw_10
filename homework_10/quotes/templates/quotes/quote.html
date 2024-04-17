@@ -95,7 +95,7 @@
     }
 
     .selected-tag:hover {
-        background-color: #0056b3;
+        background-color: #5c2222;
     }
 
     #more-tags {
@@ -116,7 +116,6 @@
         transform: translateY(-2px); 
     }
 </style>
-
 <form method="POST" action="{% url 'quotes:quote' %}">
     {% csrf_token %}
     <div style="padding: 10px">
@@ -132,10 +131,9 @@
     <div style="padding: 10px">
         <label>Select tags:</label>
         <div id="selected-tags">
-            <!-- Здесь будут отображаться выбранные теги -->
         </div>
         <button type="button" id="more-tags">More Tags</button>
-        <div id="tag-list" class="tag-list">
+        <div id="tag-list" class="tag-list" style="display: none;">
             {% for tag in tags %}
                 <label>
                     <input type="checkbox" class="tag-checkbox" name="tags" value="{{ tag.name }}">
@@ -151,80 +149,57 @@
 </form>
 
 <script>
-    // Показать все теги при нажатии на кнопку "More Tags"
-    document.getElementById('more-tags').addEventListener('click', function() {
-        var tagList = document.getElementById('tag-list');
-        if (tagList.style.display === 'none') {
-            tagList.style.display = 'block';
-        } else {
-            tagList.style.display = 'none';
-        }
-    });
-    // Обработка кликов по тегам
-    var tagCheckboxes = document.querySelectorAll('.tag-checkbox');
-    tagCheckboxes.forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            var selectedTagsContainer = document.getElementById('selected-tags');
-            var selectedTag = selectedTagsContainer.querySelector('.selected-tag[data-value="' + this.value + '"]');
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('more-tags').addEventListener('click', function() {
+            document.getElementById('tag-list').style.display = 'block';
+        });
 
-            if (this.checked && !selectedTag) {
-                // Добавить выбранный тег в контейнер
-                var selectedTagElement = document.createElement('div');
-                selectedTagElement.classList.add('selected-tag');
-                selectedTagElement.textContent = this.value;
-                selectedTagElement.setAttribute('data-value', this.value);
-                selectedTagsContainer.appendChild(selectedTagElement);
-            } else if (!this.checked && selectedTag) {
-                // Удалить выбранный тег из контейнера
-                selectedTag.parentNode.removeChild(selectedTag);
+        var selectedTagsContainer = document.getElementById('selected-tags');
+        selectedTagsContainer.addEventListener('click', function(event) {
+            if (event.target.classList.contains('selected-tag')) {
+                event.target.parentNode.removeChild(event.target);
+                var checkbox = document.querySelector('.tag-checkbox[value="' + event.target.textContent + '"]');
+                if (checkbox) {
+                    checkbox.checked = false;
+                }
             }
         });
-    });
 
-
-
-    // Обработка кликов по выбранным тегам
-    var selectedTagsContainer = document.getElementById('selected-tags');
-    selectedTagsContainer.addEventListener('click', function(event) {
-        if (event.target.classList.contains('selected-tag')) {
-            // Удаление выбранного тега из контейнера
-            event.target.parentNode.removeChild(event.target);
-
-            // Снятие соответствующего чекбокса
-            var checkbox = document.querySelector('.tag-checkbox[value="' + event.target.textContent + '"]');
-            if (checkbox) {
-                checkbox.checked = false;
-            }
-        }
-    });
-
-    // Обработка нажатия кнопки Reset
-    document.querySelector('button[type="reset"]').addEventListener('click', function() {
-        // Удалить все выбранные теги и снять галочки с чекбоксов
-        var selectedTags = document.querySelectorAll('.selected-tag');
-        selectedTags.forEach(function(tag) {
-            tag.parentNode.removeChild(tag);
-        });
         var checkboxes = document.querySelectorAll('.tag-checkbox');
         checkboxes.forEach(function(checkbox) {
-            checkbox.checked = false;
+            checkbox.addEventListener('change', function() {
+                var selectedTagsContainer = document.getElementById('selected-tags');
+                var selectedTag = selectedTagsContainer.querySelector('.selected-tag[data-value="' + this.value + '"]');
+
+                if (this.checked && !selectedTag) {
+                    var selectedTagElement = document.createElement('div');
+                    selectedTagElement.classList.add('selected-tag');
+                    selectedTagElement.textContent = this.value;
+                    selectedTagElement.setAttribute('data-value', this.value);
+                    selectedTagsContainer.appendChild(selectedTagElement);
+                } else if (!this.checked && selectedTag) {
+                    selectedTag.parentNode.removeChild(selectedTag);
+                }
+            });
+        });
+
+        document.querySelector('button[type="reset"]').addEventListener('click', function() {
+            var selectedTags = document.querySelectorAll('.selected-tag');
+            selectedTags.forEach(function(tag) {
+                tag.parentNode.removeChild(tag);
+            });
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = false;
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            var tagList = document.getElementById('tag-list');
+            var moreTagsButton = document.getElementById('more-tags');
+            if (!tagList.contains(event.target) && event.target !== moreTagsButton) {
+                tagList.style.display = 'none';
+            }
         });
     });
-    
-    // Скрыть список тегов при клике на любое место страницы, кроме списка тегов и кнопки "More Tags"
-    document.addEventListener('click', function(event) {
-        var tagList = document.getElementById('tag-list');
-        var moreTagsButton = document.getElementById('more-tags');
-        if (!tagList.contains(event.target) && event.target !== moreTagsButton) {
-            tagList.style.display = 'none';
-        }
-    });
 </script>
-
-
-
-
-
-
-
 {% endblock %}

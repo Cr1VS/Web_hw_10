@@ -157,21 +157,25 @@
         </div>
         {% endfor %}
     </div>  
-    <!-- Кнопки для навигации по страницам -->
     <div class="pagination">
         <span class="step-links">
             {% if quotes.has_previous %}
-                <a href="page/1">&laquo; First</a>
-                <a href="page/{{ quotes.previous_page_number }}">previous</a>
+                {% if quotes.previous_page_number == 1 %}
+                <a href="{% url 'quotes:quotes_by_tag' tag_name %}">&laquo; First</a>
+                <a href="{% url 'quotes:quotes_by_tag' tag_name %}">previous</a>
+                {% else %}
+                <a href="{% url 'quotes:quotes_by_tag' tag_name %}">&laquo; First</a>
+                <a href="{% url 'quotes:quotes_by_tag_paginated' tag_name quotes.previous_page_number %}">previous</a>
+                {% endif %}
             {% endif %}
-
+    
             <span class="current">
                 Page {{ quotes.number }} з {{ quotes.paginator.num_pages }}.
             </span>
-
+    
             {% if quotes.has_next %}
-                <a href="page/{{ quotes.next_page_number }}">next</a>
-                <a href="page/{{ quotes.paginator.num_pages }}">last &raquo;</a>
+                <a href="{% url 'quotes:quotes_by_tag_paginated' tag_name quotes.next_page_number %}">next</a>
+                <a href="{% url 'quotes:quotes_by_tag_paginated' tag_name quotes.paginator.num_pages %}">last &raquo;</a>
             {% endif %}
         </span>
     </div>

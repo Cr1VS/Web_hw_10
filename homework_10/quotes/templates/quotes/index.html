@@ -169,8 +169,8 @@
 <div class="pagination">
     <span class="step-links">
         {% if quotes.has_previous %}
-            <a href="/page/1">&laquo; First</a>
-            <a href="/page/{{ quotes.previous_page_number }}">&#10094; Previous</a>
+        <a href="/quotes_by_tag/{{ tag.name }}">&laquo; First</a>
+        <a href="/quotes_by_tag/{{ tag.name }}/page/{{ quotes.previous_page_number }}">&#10094; Previous</a>
         {% endif %}
         
         <span class="current">
@@ -178,8 +178,8 @@
         </span>
         
         {% if quotes.has_next %}
-            <a href="/page/{{ quotes.next_page_number }}">Next &#10095;</a>
-            <a href="/page/{{ quotes.paginator.num_pages }}">Last &raquo;</a>
+            <a href="/quotes_by_tag/{{ tag.name }}/page/{{ quotes.next_page_number }}">Next &#10095;</a>
+            <a href="/quotes_by_tag/{{ tag.name }}/page/{{ quotes.paginator.num_pages }}">Last &raquo;</a>
         {% endif %}
     </span>
 </div>

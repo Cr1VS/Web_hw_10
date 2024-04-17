@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
+from django.contrib import messages
 from django.db.models import Count
 
 
@@ -48,7 +50,7 @@ def tag_info(request, name, page=1):
         quotes = quotes.filter(tags__name__icontains=search_tags)
     
     top_ten_tags = Tag.objects.annotate(num_quotes=Count("quotes")).order_by("-num_quotes")[:10]
-    per_page = 10
+    per_page = 3
     paginator = Paginator(quotes, per_page)
     
     try:
@@ -65,18 +67,41 @@ def tag_info(request, name, page=1):
         "tag_name": name
     })
 
-
+# @login_required
+# def tag_add(request):
+#     if request.method == "POST":
+#         form = TagForm(request.POST)
+#         if form.is_valid():
+#             tag = form.save(commit=False)
+#             tag.user = request.user
+#             # Проверяем, существует ли тег с таким же именем
+#             if Tag.objects.filter(name=tag.name).exists():
+#                 return JsonResponse({"success": False, "message": f"The tag {tag.name} already exists!"})
+#             else:
+#                 tag.save()
+#                 messages.success(request, f"Tag <{tag.name}> successfully added")
+#                 return JsonResponse({"success": True, "name": tag.name})
+#         else:
+#             return JsonResponse({"success": False, "message": "Form is invalid"})
+    
+#     return JsonResponse({"success": False, "message": "GET method not allowed"})
+@login_required
 @login_required
 def tag_add(request):
     if request.method == "POST":
         form = TagForm(request.POST)
         if form.is_valid():
-            tag = form.save(commit=False)
-            tag.user = request.user
-            tag.save()
-            return redirect(to="quotes:main")
+            tag_name = form.cleaned_data['name']
+            if Tag.objects.filter(name=tag_name).exists():
+                return JsonResponse({'success': False, 'message': f'The tag "{tag_name}" already exists!'})
+            else:
+                tag = form.save(commit=False)
+                tag.user = request.user
+                tag.save()
+                return JsonResponse({'success': True, 'name': tag.name})
         else:
-            return render(request, "quotes/tag_add  .html", {"form": form})
+            tag_name = request.POST.get('name')
+            return JsonResponse({"success": False, "message": f"The tag <{tag_name}> already exists!"})
 
     return render(request, "quotes/tag_add.html", {"form": TagForm()})
 
